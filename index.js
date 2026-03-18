@@ -13,7 +13,13 @@ const liveStatus      = {};   // true/false par compte
 const connections     = {};   // WebcastPushConnection par compte
 
 // ── Client Discord ─────────────────────────────────────────────
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
+});
 
 client.once('ready', () => {
     console.log(`✅ Bot connecté : ${client.user.tag}`);
@@ -122,6 +128,18 @@ async function checkAllAccounts() {
         }
     }
 }
+
+// ── Commande !fakelive ─────────────────────────────────────────
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+    if (!message.content.startsWith('!fakelive')) return;
+
+    const args = message.content.split(' ');
+    const username = args[1] || ACCOUNTS[0];
+
+    await message.reply(`🎭 Simulation de live pour **@${username}**...`);
+    await sendNotification(username, 'live');
+});
 
 // ── Démarrage ─────────────────────────────────────────────────
 client.login(DISCORD_TOKEN).catch(err => {
