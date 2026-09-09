@@ -8,6 +8,9 @@ const CHANNEL_ID      = process.env.CHANNEL_ID_LIVE;
 const ACCOUNTS        = process.env.TIKTOK_ACCOUNTS.split(',').map(a => a.trim());
 const CHECK_INTERVAL  = parseInt(process.env.CHECK_INTERVAL || '60') * 1000;
 
+// Date affichée dans les notifications : 10/09/2026
+const NOTIFICATION_DATE = new Date('2026-09-10T00:00:00Z');
+
 // ── État interne ───────────────────────────────────────────────
 const liveStatus      = {};   // true/false par compte
 const connections     = {};   // WebcastPushConnection par compte
@@ -51,7 +54,7 @@ async function sendNotification(username, type) {
                 value: `[Clique ici](https://www.tiktok.com/@${username}/live)`,
             })
             .setThumbnail('https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.png')
-            .setTimestamp()
+            .setTimestamp(NOTIFICATION_DATE)
             .setFooter({ text: 'TikTok Live Notifier' });
 
         await channel.send({ content: '@everyone', embeds: [embed] });
@@ -62,7 +65,7 @@ async function sendNotification(username, type) {
             .setColor(0x808080)
             .setTitle('⭕  Live terminé')
             .setDescription(`**@${username}** a terminé son live. Merci d'avoir regardé !`)
-            .setTimestamp()
+            .setTimestamp(NOTIFICATION_DATE)
             .setFooter({ text: 'TikTok Live Notifier' });
 
         await channel.send({ embeds: [embed] });
